@@ -53,6 +53,7 @@ public final class GuiCommand extends BaseCommand {
         for (String playerUUID : playersDirectory.list()) {
             OfflinePlayer other = Bukkit.getOfflinePlayer(UUID.fromString(playerUUID));
             InventoryItem playerHeadItem = new InventoryItem(Material.PLAYER_HEAD);
+            playerHeadItem.setSkullOwner(other.getName());
             playerHeadItem.setDisplayName("&e" + Bukkit.getOfflinePlayer(UUID.fromString(playerUUID)).getName());
             playerHeadItem.setAction(action -> createInventoryHistoryGui(player, other));
             playersGui.addItem(playerHeadItem.build());

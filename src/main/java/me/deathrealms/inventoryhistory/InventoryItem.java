@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +34,12 @@ public final class InventoryItem {
         this.item = item;
         this.meta = item.getItemMeta();
         this.action = action;
+    }
+
+    public InventoryItem setSkullOwner(String owner) {
+        SkullMeta meta = ((SkullMeta) this.meta);
+        meta.setOwner(owner);
+        return this;
     }
 
     public InventoryItem setDisplayName(String name) {
