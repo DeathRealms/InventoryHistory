@@ -1,0 +1,6 @@
+name: InventoryHistory
+version: '${version}'
+main: me.deathrealms.inventoryhistory.InventoryHistory
+api-version: 1.19
+authors: [ DeathRealms ]
+description: Saves backups of players inventories on death.

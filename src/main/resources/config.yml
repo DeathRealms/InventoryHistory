@@ -1,0 +1,5 @@
+#Should player inventories be overwritten when restored?
+overwrite-inventory: true
+
+#Should the saved inventory be deleted after restored?
+delete-after-restore: false
