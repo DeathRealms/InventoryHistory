@@ -48,7 +48,7 @@ public final class GuiCommand extends BaseCommand {
     }
 
     private void createPlayersGui(Player player) {
-        PaginatedGui playersGui = Gui.paginated().title(Component.text("Players")).rows(6).disableAllInteractions().create();
+        PaginatedGui playersGui = Gui.paginated().title(Component.text("Players")).rows(6).pageSize(45).disableAllInteractions().create();
 
         for (String playerUUID : playersDirectory.list()) {
             OfflinePlayer other = Bukkit.getOfflinePlayer(UUID.fromString(playerUUID));
@@ -59,13 +59,14 @@ public final class GuiCommand extends BaseCommand {
             playersGui.addItem(playerHeadItem.build());
         }
 
+        addPageNavigation(playersGui, player);
         playersGui.setItem(49, new InventoryItem(Material.BARRIER, action -> player.closeInventory()).setDisplayName("&cClose").build());
 
         playersGui.open(player);
     }
 
     private void createInventoryHistoryGui(Player player, OfflinePlayer other) {
-        PaginatedGui inventoryHistoryGui = Gui.paginated().title(Component.text("Inventory History")).rows(6).disableAllInteractions().create();
+        PaginatedGui inventoryHistoryGui = Gui.paginated().title(Component.text("Inventory History")).rows(6).pageSize(45).disableAllInteractions().create();
 
         File inventoriesDirectory = new File(playersDirectory, other.getUniqueId().toString());
         for (String inventoryFilename : inventoriesDirectory.list()) {
@@ -86,6 +87,7 @@ public final class GuiCommand extends BaseCommand {
             Bukkit.getScheduler().runTaskLater(plugin, () -> createInventoryHistoryGui(player, other), 2);
         }).setDisplayName("&cDelete All Inventories").build());
 
+        addPageNavigation(inventoryHistoryGui, player);
         inventoryHistoryGui.setItem(49, new InventoryItem(Material.BOOK, action -> createPlayersGui(player)).setDisplayName("&cBack").build());
 
         inventoryHistoryGui.open(player);
@@ -165,6 +167,28 @@ public final class GuiCommand extends BaseCommand {
         inventoryGui.setItem(53, restoreItem.build());
 
         inventoryGui.open(player);
+    }
+
+    private void addPageNavigation(PaginatedGui gui, Player player) {
+        gui.setOpenGuiAction(action -> {
+            if (gui.getCurrentPageNum() > 1) {
+                gui.updateItem(48, new InventoryItem(Material.ARROW, previous -> {
+                    gui.previous();
+                    gui.open(player, gui.getCurrentPageNum());
+                }).setDisplayName("&cPrevious Page").build());
+            } else {
+                gui.updateItem(48, new GuiItem(Material.AIR));
+            }
+
+            if (gui.getCurrentPageNum() < gui.getPagesNum()) {
+                gui.updateItem(50, new InventoryItem(Material.ARROW, next -> {
+                    gui.next();
+                    gui.open(player, gui.getCurrentPageNum());
+                }).setDisplayName("&aNext Page").build());
+            } else {
+                gui.updateItem(50, new GuiItem(Material.AIR));
+            }
+        });
     }
 
     private Object stringToObject(String contentsData) {
