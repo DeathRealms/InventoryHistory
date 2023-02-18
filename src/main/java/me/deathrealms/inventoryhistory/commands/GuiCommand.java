@@ -11,6 +11,7 @@ import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import me.deathrealms.inventoryhistory.InventoryFile;
 import me.deathrealms.inventoryhistory.InventoryItem;
+import me.deathrealms.inventoryhistory.InventoryUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,11 +20,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.io.BukkitObjectInputStream;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.util.Base64;
 import java.util.UUID;
 
 @CommandAlias("inventoryhistory|invhist|invhistory|inventoryhist|ih")
@@ -95,9 +93,9 @@ public final class GuiCommand extends BaseCommand {
 
     private void createInventoryGui(Player player, InventoryFile inventoryFile, OfflinePlayer other) {
         Gui inventoryGui = Gui.gui().title(Component.text("Inventory")).rows(6).disableAllInteractions().create();
-        ItemStack[] contents = (ItemStack[]) stringToObject(inventoryFile.getConfig().getString("contents"));
+        ItemStack[] contents = (ItemStack[]) InventoryUtils.stringToObject(inventoryFile.getConfig().getString("contents"));
         // Need to create a copy because the Gui API adds NBT tags to the items.
-        ItemStack[] contentsCopy = (ItemStack[]) stringToObject(inventoryFile.getConfig().getString("contents"));
+        ItemStack[] contentsCopy = (ItemStack[]) InventoryUtils.stringToObject(inventoryFile.getConfig().getString("contents"));
 
         for (int i = 0; i < contents.length; i++) {
             ItemStack item = contents[i];
@@ -132,7 +130,7 @@ public final class GuiCommand extends BaseCommand {
                 return;
             }
 
-            other.getPlayer().teleport((Location) stringToObject(inventoryFile.getConfig().getString("location")));
+            other.getPlayer().teleport((Location) InventoryUtils.stringToObject(inventoryFile.getConfig().getString("location")));
 
             player.closeInventory();
         });
@@ -189,16 +187,5 @@ public final class GuiCommand extends BaseCommand {
                 gui.updateItem(50, new GuiItem(Material.AIR));
             }
         });
-    }
-
-    private Object stringToObject(String contentsData) {
-        try {
-            ByteArrayInputStream stream = new ByteArrayInputStream(Base64.getDecoder().decode(contentsData));
-            BukkitObjectInputStream data = new BukkitObjectInputStream(stream);
-            return data.readObject();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }
