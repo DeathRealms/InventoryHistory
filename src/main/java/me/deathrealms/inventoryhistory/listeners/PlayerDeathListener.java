@@ -10,6 +10,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
@@ -31,7 +32,8 @@ public class PlayerDeathListener implements Listener {
 
         InventoryFile inventoryFile = new InventoryFile(plugin, player.getUniqueId(), Date.from(Instant.now()).getTime() + ".yml");
         inventoryFile.create();
-        inventoryFile.set("date", Date.from(Instant.now()).toString());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd - hh:mm:ss aa");
+        inventoryFile.set("date", dateFormat.format(new Date()));
         inventoryFile.set("cause", event.getDeathMessage());
         inventoryFile.set("location", objectToString(player.getLocation()));
         inventoryFile.set("restored", "&cFalse");
