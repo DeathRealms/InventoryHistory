@@ -105,6 +105,7 @@ public final class GuiCommand extends BaseCommand {
             } else {
                 InventoryItem contentItem = new InventoryItem(item);
                 contentItem.addLore("&aClick to restore this item to the player.");
+                int slot = i;
                 contentItem.setAction(action -> {
                     if (!other.isOnline()) {
                         return;
@@ -113,6 +114,13 @@ public final class GuiCommand extends BaseCommand {
                     if (!other.getPlayer().getInventory().addItem(itemCopy).isEmpty()) {
                         other.getPlayer().getLocation().getWorld().dropItemNaturally(other.getPlayer().getLocation(), itemCopy);
                     }
+
+                    if (plugin.getConfig().getBoolean("delete-item-after-restore")) {
+                        contentsCopy[slot] = null;
+                        inventoryFile.set("contents", InventoryUtils.objectToString(contentsCopy));
+                    }
+
+                    createInventoryGui(player, inventoryFile, other);
                 });
                 inventoryGui.addItem(contentItem.build());
             }
